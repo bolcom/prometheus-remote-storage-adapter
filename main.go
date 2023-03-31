@@ -17,6 +17,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/bolcom/prometheus-remote-storage-adapter/mysql"
 	"io/ioutil"
 	"net/http"
 	_ "net/http/pprof"
@@ -52,6 +53,11 @@ type config struct {
 	remoteTimeout           time.Duration
 	listenAddr              string
 	telemetryPath           string
+	mysqlAddress            string
+	mysqlPort               string
+	mysqlUsername           string
+	mysqlPassword           string
+	mysqlDatabase           string
 }
 
 var (
@@ -105,6 +111,21 @@ func parseFlags() *config {
 		influxdbPassword: os.Getenv("INFLUXDB_PW"),
 	}
 
+	flag.StringVar(&cfg.mysqlAddress, "mysql-address", "localhost",
+		"The mysql server connection address. None, if empty.",
+	)
+	flag.StringVar(&cfg.mysqlPort, "mysql-port", "3306",
+		"The mysql server connection address. None, if empty.",
+	)
+	flag.StringVar(&cfg.mysqlUsername, "mysql-username", "root",
+		"The mysql server connection username. None, if empty.",
+	)
+	flag.StringVar(&cfg.mysqlPassword, "mysql-password", "",
+		"The mysql server connection password. None, if empty.",
+	)
+	flag.StringVar(&cfg.mysqlDatabase, "mysql-database", "monitor",
+		"The mysql server connection database. None, if empty.",
+	)
 	flag.StringVar(&cfg.graphiteAddress, "graphite-address", "",
 		"The host:port of the Graphite server to send samples to. None, if empty.",
 	)
@@ -178,6 +199,10 @@ func buildClients(cfg *config) ([]writer, []reader) {
 		prometheus.MustRegister(c)
 		writers = append(writers, c)
 		readers = append(readers, c)
+	}
+	if cfg.mysqlAddress != "" {
+		c := mysql.NewClient(cfg.mysqlAddress, cfg.mysqlPort, cfg.mysqlUsername, cfg.mysqlPassword, cfg.mysqlDatabase)
+		writers = append(writers, c)
 	}
 	return writers, readers
 }
