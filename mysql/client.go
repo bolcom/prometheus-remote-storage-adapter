@@ -37,29 +37,32 @@ func (client *Client) Name() string {
 
 func (client *Client) Write(samples model.Samples) error {
 
+	//Open mysql connections.
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/information_schema", client.Username, client.Password, client.Address, client.Port))
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
+	//Parse schema properties.
 	schemas, _ := client.ParseYml()
 	err = client.Schemas(schemas)
 	if err != nil {
 		return err
 	}
 
+	//Open MySQL transaction.
 	trx, err := db.Begin()
 	if err != nil {
 		return err
 	}
 
 	for _, sample := range samples {
-
 		metric := sample.Metric
 		value := sample.Value
 		timestamp := sample.Timestamp
 
+		//only write schema tables.
 		sampleName, ok := metric["__name__"]
 		if !ok {
 			log.Infoln("received invalid sample %v", sample)
@@ -142,11 +145,14 @@ func (client *Client) ParseYml() (*Schemas, error) {
 }
 
 func (client *Client) Schemas(schemas *Schemas) error {
+
+	//Do nothing if schemas length is zero.
 	s := schemas.Schemas
 	if len(s) == 0 {
 		return nil
 	}
 
+	//Open mysql connection.
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/information_schema", client.Username, client.Password, client.Address, client.Port))
 	if err != nil {
 		return err
