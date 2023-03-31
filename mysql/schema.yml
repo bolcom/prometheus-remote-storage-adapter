@@ -1,0 +1,36 @@
+schemas:
+  - schema_name: node_cpu_seconds_total
+    schema_columns:
+      - column: cpu
+        type: string
+        size: 16
+      - column: instance
+        type: string
+        size: 255
+      - column: job
+        type: string
+        size: 255
+      - column: mode
+        type: string
+        size: 255
+      - column: record_timestamp
+        type: long
+        size: 0
+      - column: value
+        type: float
+        size: 0
+
+  - schema_name: scrape_series_added
+    schema_columns:
+      - column: instance
+        type: string
+        size: 255
+      - column: job
+        type: string
+        size: 255
+      - column: record_timestamp
+        type: long
+        size: 0
+      - column: value
+        type: float
+        size: 0

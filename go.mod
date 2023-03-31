@@ -21,3 +21,8 @@ require (
 	golang.org/x/time v0.0.0-20170424234030-8be79e1e0910
 	gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556
 )
+
+require (
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
