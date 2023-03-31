@@ -201,12 +201,8 @@ func buildClients(cfg *config) ([]writer, []reader) {
 		readers = append(readers, c)
 	}
 	if cfg.mysqlAddress != "" {
-		c, err := mysql.NewClient(cfg.mysqlAddress, cfg.mysqlPort, cfg.mysqlUsername, cfg.mysqlPassword, cfg.mysqlDatabase)
-		if err != nil {
-			log.Infoln("MySQL adapter initialization failure")
-		} else {
-			writers = append(writers, c)
-		}
+		c := mysql.NewClient(cfg.mysqlAddress, cfg.mysqlPort, cfg.mysqlUsername, cfg.mysqlPassword, cfg.mysqlDatabase)
+		writers = append(writers, c)
 	}
 	return writers, readers
 }

@@ -20,7 +20,7 @@ type Client struct {
 	Database string
 }
 
-func NewClient(address string, port string, username string, password string, database string) (*Client, error) {
+func NewClient(address string, port string, username string, password string, database string) *Client {
 
 	return &Client{
 		Address:  address,
@@ -28,7 +28,7 @@ func NewClient(address string, port string, username string, password string, da
 		Username: username,
 		Password: password,
 		Database: database,
-	}, nil
+	}
 }
 
 func (client *Client) Name() string {
